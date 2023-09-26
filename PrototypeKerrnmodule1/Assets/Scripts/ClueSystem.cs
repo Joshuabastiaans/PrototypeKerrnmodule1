@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class ClueSystem : MonoBehaviour
 {
-    public GameObject[] clues;
-    public int currentClue = 0;
+    private GameObject[] clues;
+    private int currentClue = 0;
+    public Animation door;
 
     private void Start()
     {
@@ -19,11 +20,11 @@ public class ClueSystem : MonoBehaviour
         {
             print(clue.name);
         }
-        for (int i = 1; i < clues.Length; i++)
+        for (int i = 0; i < clues.Length; i++)
         {
             clues[i].SetActive(false);
         }
-        clues[0].SetActive(true);
+        StartCoroutine(ActivateLate());
     }
 
     public void ActivateNextClue()
@@ -34,11 +35,24 @@ public class ClueSystem : MonoBehaviour
             clues[currentClue].SetActive(false);
             //activate next clue
             currentClue++;
-            clues[currentClue].SetActive(true);
-
+            if(currentClue != clues.Length - 1)
+                clues[currentClue].SetActive(true);
+            OpenDoor();
         }
     }
 
+    private IEnumerator ActivateLate()
+    {
+        yield return new WaitForSeconds(10);
+        clues[0].SetActive(true);
+    }
 
-
+    //if all clues are found, open door
+    public void OpenDoor()
+    {
+        if (currentClue == clues.Length - 1)
+        {
+            door.Play("Open Door Animation");
+        }
+    }
 }
